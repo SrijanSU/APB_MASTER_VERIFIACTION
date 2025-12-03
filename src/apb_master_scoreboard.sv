@@ -40,12 +40,12 @@ class apb_master_scoreboard extends uvm_scoreboard;
     forever begin
       act_fifo.get(act_tr);  // input side
       pas_fifo.get(pas_tr);  // DUT output sampling every posedge
-      if(state == IDLE)begin
-      if(prev_transfer == act_tr.transfer)
-        state = SETUP;
-      else
-        state= IDLE;
-      end
+//       if(state == IDLE)begin
+//       if(prev_transfer == act_tr.transfer)
+//         state = SETUP;
+//       else
+//         state= IDLE;
+//       end
       reference_model(act_tr, pas_tr);
       check_outputs(pas_tr);
       prev_transfer = act_tr.transfer;
@@ -73,8 +73,10 @@ class apb_master_scoreboard extends uvm_scoreboard;
 //         exp_PSTRB  = act.strb_in;
 //         exp_rdata  = act.PRDATA;
 
-//         if (act.transfer == 1)
-//           state = SETUP;
+        if (act.transfer == 1)
+          state = SETUP;
+        else
+          state = IDLE;
       end
 
       // -------------------------------------- SETUP
@@ -83,11 +85,22 @@ class apb_master_scoreboard extends uvm_scoreboard;
         exp_PENABLE = 0;
         exp_done = 0;
         exp_err = 0;
-//         exp_PWRITE = act.write_read;
-//         exp_PADDR  = act.addr_in;
-//         exp_PWDATA = act.wdata_in;
-//         exp_PSTRB  = act.strb_in;
-//         exp_rdata  = act.PRDATA;
+        if (!act.write_read)begin
+            exp_PWRITE = act.write_read;
+          exp_PADDR  = act.addr_in;
+          exp_PSTRB  = 0;
+          //exp_rdata  = act.PRDATA;
+            exp_PWDATA = 0;
+          //exp_err = act.PSLVERR;
+          end
+        else begin
+          exp_PWRITE = act.write_read;
+          exp_PADDR  = act.addr_in;
+          exp_PWDATA = act.wdata_in;
+          exp_PSTRB  = act.strb_in;
+          //exp_err = act.PSLVERR;
+          exp_PWDATA = act.wdata_in;
+        end
 
         state = ACCESS;
       end
@@ -102,7 +115,7 @@ class apb_master_scoreboard extends uvm_scoreboard;
           if (!act.write_read)begin
             exp_PWRITE = act.write_read;
           exp_PADDR  = act.addr_in;
-          exp_PSTRB  = act.strb_in;
+          exp_PSTRB  = 0;
           exp_rdata  = act.PRDATA;
           exp_err = act.PSLVERR;
           end
@@ -121,6 +134,7 @@ class apb_master_scoreboard extends uvm_scoreboard;
         end
         else begin
           exp_done = 0; // stay ACCESS if PREADY low
+          state=ACCESS;
         end
       end
 

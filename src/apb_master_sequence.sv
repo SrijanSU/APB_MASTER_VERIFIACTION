@@ -9,12 +9,12 @@ class apb_master_base_sequence extends uvm_sequence#(apb_master_seq_item); //BAS
   endfunction:new
 
   task body();
-    repeat(10)begin
+    repeat(100)begin
     `uvm_do_with(seq,
     {
-      seq.transfer == 1;
+     // seq.transfer == 1;
       seq.PRESETn == 1;
-      seq.PREADY == 1;
+      //seq.PREADY == 1;
     })
     end
   endtask
