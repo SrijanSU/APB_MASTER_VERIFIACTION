@@ -69,7 +69,7 @@ module top;
     // Provide virtual interface to agent inside env
     uvm_config_db#(virtual apb_if)::set(null, "*", "vif", apb_vif);
 
-    run_test("apb_master_test");
+    run_test("regression_test");
     #100 $finish;
   end
 

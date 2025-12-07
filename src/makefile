@@ -1,7 +1,7 @@
 QUESTA := /home/share/questa.csh
 SHELL := /bin/csh
-TEST ?= apb_master_test
-V ?= UVM_NONE
+TEST ?= regression_test
+V ?= UVM_LOW
 
 .ONESHELL:	
 all:
@@ -26,7 +26,7 @@ clean:
 compile:
 	@echo "\t\t\t\t...............................COMPILING CODE..............................."
 	source $(QUESTA)
-	vlog -sv +acc +cover +fcover -l apb_master.log testbench.sv 
+	vlog +define+UVM_NO_DPI testbench.sv "+incdir+/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src"
 
 wave:
 	make compile

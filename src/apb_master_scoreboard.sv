@@ -23,6 +23,15 @@ class apb_master_scoreboard extends uvm_scoreboard;
   bit [`DATA_WIDTH/8-1:0] exp_PSTRB;
   bit [`DATA_WIDTH-1:0] exp_rdata;
   bit exp_done, exp_err;
+  
+  
+  // ======================================================
+  // COUNTERS ADDED (increment only on PASS)
+  // ======================================================
+  int unsigned pass_psel, pass_penable, pass_pwrite;
+  int unsigned pass_paddr, pass_pwdata, pass_pstrb;
+  int unsigned pass_rdata, pass_done, pass_err;
+  
 
   function new(string name = "apb_scoreboard", uvm_component parent);
     super.new(name, parent);
@@ -147,52 +156,83 @@ class apb_master_scoreboard extends uvm_scoreboard;
   //----------------------------------------------------------------------
   task check_outputs(apb_master_seq_item tr);
 
-  if (exp_PSEL === tr.PSEL)
+  if (exp_PSEL === tr.PSEL) begin
+    pass_psel++;
     `uvm_info("APB_SCB", $sformatf("PSEL PASS  Exp=%0b  Act=%0b", exp_PSEL, tr.PSEL), UVM_LOW)
-  else
+  end else
     `uvm_error("APB_SCB", $sformatf("PSEL FAIL  Exp=%0b  Act=%0b", exp_PSEL, tr.PSEL))
 
-  if (exp_PENABLE === tr.PENABLE)
+  if (exp_PENABLE === tr.PENABLE) begin
+    pass_penable++;
     `uvm_info("APB_SCB", $sformatf("PENABLE PASS  Exp=%0b  Act=%0b", exp_PENABLE, tr.PENABLE), UVM_LOW)
-  else
+  end else
     `uvm_error("APB_SCB", $sformatf("PENABLE FAIL  Exp=%0b  Act=%0b", exp_PENABLE, tr.PENABLE))
 
-  if (exp_PWRITE === tr.PWRITE)
+  if (exp_PWRITE === tr.PWRITE) begin
+    pass_pwrite++;
     `uvm_info("APB_SCB", $sformatf("PWRITE PASS  Exp=%0b  Act=%0b", exp_PWRITE, tr.PWRITE), UVM_LOW)
-  else
+  end else
     `uvm_error("APB_SCB", $sformatf("PWRITE FAIL  Exp=%0b  Act=%0b", exp_PWRITE, tr.PWRITE))
 
-  if (exp_PADDR === tr.PADDR)
+  if (exp_PADDR === tr.PADDR) begin
+    pass_paddr++;
     `uvm_info("APB_SCB", $sformatf("PADDR PASS  Exp=%0d  Act=%0d", exp_PADDR, tr.PADDR), UVM_LOW)
-  else
+  end else
     `uvm_error("APB_SCB", $sformatf("PADDR FAIL  Exp=%0d  Act=%0d", exp_PADDR, tr.PADDR))
 
-  if (exp_PWDATA === tr.PWDATA)
+  if (exp_PWDATA === tr.PWDATA) begin
+    pass_pwdata++;
     `uvm_info("APB_SCB", $sformatf("PWDATA PASS  Exp=%0d  Act=%0d", exp_PWDATA, tr.PWDATA), UVM_LOW)
-  else
+  end else
     `uvm_error("APB_SCB", $sformatf("PWDATA FAIL  Exp=%0d  Act=%0d", exp_PWDATA, tr.PWDATA))
 
-  if (exp_PSTRB === tr.PSTRB)
+  if (exp_PSTRB === tr.PSTRB) begin
+    pass_pstrb++;
     `uvm_info("APB_SCB", $sformatf("PSTRB PASS  Exp=%0d  Act=%0d", exp_PSTRB, tr.PSTRB), UVM_LOW)
-  else
+  end else
     `uvm_error("APB_SCB", $sformatf("PSTRB FAIL  Exp=%0d  Act=%0d", exp_PSTRB, tr.PSTRB))
 
-  if (exp_rdata === tr.rdata_out)
+  if (exp_rdata === tr.rdata_out) begin
+    pass_rdata++;
     `uvm_info("APB_SCB", $sformatf("RDATA PASS  Exp=%0d  Act=%0d", exp_rdata, tr.rdata_out), UVM_LOW)
-  else
+  end else
     `uvm_error("APB_SCB", $sformatf("RDATA FAIL  Exp=%0d  Act=%0d", exp_rdata, tr.rdata_out))
 
-  if (exp_done === tr.transfer_done)
+  if (exp_done === tr.transfer_done) begin
+    pass_done++;
     `uvm_info("APB_SCB", $sformatf("DONE PASS  Exp=%0b  Act=%0b", exp_done, tr.transfer_done), UVM_LOW)
-  else
+  end else
     `uvm_error("APB_SCB", $sformatf("DONE FAIL  Exp=%0b  Act=%0b", exp_done, tr.transfer_done))
 
-  if (exp_err === tr.error)
+  if (exp_err === tr.error) begin
+    pass_err++;
     `uvm_info("APB_SCB", $sformatf("ERROR PASS  Exp=%0b  Act=%0b", exp_err, tr.error), UVM_LOW)
-  else
+  end else
     `uvm_error("APB_SCB", $sformatf("ERROR FAIL  Exp=%0b  Act=%0b", exp_err, tr.error))
 
 endtask
+
+    function void report_phase(uvm_phase phase);
+  super.report_phase(phase);
+
+  `uvm_info("APB_SCB_REPORT", 
+    $sformatf("\n================ SIGNAL PASS REPORT ================
+      PSEL    PASS    : %0d
+      PENABLE PASS    : %0d
+      PWRITE  PASS    : %0d
+      PADDR   PASS    : %0d
+      PWDATA  PASS    : %0d
+      PSTRB   PASS    : %0d
+      RDATA   PASS    : %0d
+      DONE    PASS    : %0d
+      ERROR   PASS    : %0d
+    =====================================================",
+      pass_psel, pass_penable, pass_pwrite,
+      pass_paddr, pass_pwdata, pass_pstrb,
+      pass_rdata, pass_done, pass_err
+    ),
+  UVM_NONE);
+endfunction
 
 
 endclass
