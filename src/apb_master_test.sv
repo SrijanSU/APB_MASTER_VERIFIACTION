@@ -365,8 +365,9 @@ class regression_test extends uvm_test;
     phase.raise_objection(this);
    seq = regression_sequence::type_id::create("seq");
     `uvm_info("APB_TEST", "Starting APB Master Regressiontest", UVM_LOW)
-
+    repeat(`TRANSACTION)begin
     seq.start(env.a_agt.seqr);
+    end
 
     `uvm_info("APB_TEST", "APB Master Read Regression completed", UVM_LOW)
 

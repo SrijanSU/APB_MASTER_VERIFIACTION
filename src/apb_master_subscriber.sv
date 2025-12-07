@@ -13,12 +13,12 @@ class apb_master_subscriber extends uvm_subscriber #(apb_master_seq_item);
 
 
     PRESETn_cp     : coverpoint act_tr.PRESETn { bins pr[] = {0,1}; }
-    addr_in_cp     : coverpoint act_tr.addr_in {bins addr[]= {[0:(2**`ADDR_WIDTH-1)]};}
+    addr_in_cp     : coverpoint act_tr.addr_in {bins addr[]= {[0:(2**`ADDR_WIDTH)-1]};}
     write_read_cp  : coverpoint act_tr.write_read { bins wr_rd[] = {0,1}; }
-    wdata_in_cp    : coverpoint act_tr.wdata_in {bins wdata[]= {[0:(2**`DATA_WIDTH-1)]};}
-    PRDATA_cp      : coverpoint act_tr.PRDATA {bins prdata[]= {[0:(2**`DATA_WIDTH-1)]};}
+    wdata_in_cp    : coverpoint act_tr.wdata_in {bins wdata[]= {[0:(2**`DATA_WIDTH)-1]};}
+    PRDATA_cp      : coverpoint act_tr.PRDATA {bins prdata[]= {[0:(2**`DATA_WIDTH)-1]};}
     transfer_cp    : coverpoint act_tr.transfer { bins trans[] = {0,1}; }
-    strb_in_cp     : coverpoint act_tr.strb_in { bins strb[] = {[0:`DATA_WIDTH/8-1]}; }
+    strb_in_cp     : coverpoint act_tr.strb_in { bins strb[] = {[0:(`DATA_WIDTH/8)-1]}; }
     PSLVERR_cp     : coverpoint act_tr.PSLVERR { bins pslverr[] = {0,1}; }
     PREADY_cp      : coverpoint act_tr.PREADY { bins ready[] = {0,1}; }
 
@@ -31,13 +31,13 @@ class apb_master_subscriber extends uvm_subscriber #(apb_master_seq_item);
   covergroup apb_op_cg ;
 
 
-    rdata_out_cp     : coverpoint pas_tr.rdata_out {bins rdata[]= {[0:(2**`DATA_WIDTH-1)]};}
+    rdata_out_cp     : coverpoint pas_tr.rdata_out {bins rdata[]= {[0:(2**`DATA_WIDTH)-1]};}
     PSEL_cp          : coverpoint pas_tr.PSEL { bins psel[] = {0,1}; }
     PENABLE_cp       : coverpoint pas_tr.PENABLE { bins pen[] = {0,1}; }
-    PADDR_cp         : coverpoint pas_tr.PADDR {bins paddr[]= {[0:(2**`ADDR_WIDTH-1)]};}
+    PADDR_cp         : coverpoint pas_tr.PADDR {bins paddr[]= {[0:(2**`ADDR_WIDTH)-1]};}
     PWRITE_cp        : coverpoint pas_tr.PWRITE { bins pw[] = {0,1}; }
     PWDATA_cp        : coverpoint pas_tr.PWDATA { bins pwdata[] = {0,1}; }
-    PSTRB_cp         : coverpoint pas_tr.PSTRB { bins pstrb[] = {[0:`DATA_WIDTH/8-1]}; }
+    PSTRB_cp         : coverpoint pas_tr.PSTRB { bins pstrb[] = {[0:(`DATA_WIDTH/8)-1]}; }
     transfer_done_cp : coverpoint pas_tr.transfer_done { bins tr_do[] = {0,1}; }
     error_cp         : coverpoint pas_tr.error { bins err[] = {0,1}; }
 
